@@ -5,6 +5,7 @@ import random
 import time
 import os
 import pickle
+import asyncio
 """
 Programmed by: Darren Wu 2020
 Project: Discord GooseBot
@@ -15,7 +16,7 @@ Project: Discord GooseBot
 client = commands.Bot(command_prefix = '|')
 client.remove_command('help')
 # How often the Goosebot activates
-maxRand = 20
+maxRand = 15
 
 """
 Unique server toggle variables
@@ -27,10 +28,46 @@ Unique server toggle variables
 """
 serverID = []
 serverToggle = []
+with open('servers.data', 'rb') as filehandle:
+        serverID = pickle.load(filehandle)
+        print("Server IDs loaded!")
+with open('toggle.data', 'rb') as filehandle:
+    serverToggle = pickle.load(filehandle)
+    print("Server toggled actions loaded!")
 
-# Adds server to list if it doesn't exist in the list
-def addServer(message):
-    server = message.guild.id 
+
+# Lets host know if bot is functional
+@client.event
+async def on_ready():
+    print("I'm in " + str(len(client.guilds)) + " servers!")
+    with open('servers.data', 'rb') as filehandle:
+        serverID = pickle.load(filehandle)
+        print("Server IDs loaded!")
+    with open('toggle.data', 'rb') as filehandle:
+        serverToggle = pickle.load(filehandle)
+        print("Server toggled actions loaded!")
+    print("Honks Incoming")
+
+
+# Custom Help command
+@client.command()
+async def help(message):
+    author = message.author
+    embed = discord.Embed(
+        colour = discord.Colour.orange()
+    )
+    embed.set_author(name= 'Help')
+    embed.add_field(name='|help', value = 'Shows this message', inline=False)
+    embed.add_field(name='|toggle', value = 'Can toggle certain actions on and off\nTakes \'MessageHonk\', \'Reaction\', \'Memes\', \'Delete\', \'Disconnect\', \'VoiceHonk\'', inline=False)
+    embed.add_field(name='|show', value = 'Shows actions that are toggled on and off', inline=False)
+    embed.add_field(name='How the bot works', value = 'The bot has a random chance per message of performing a random action  ', inline=False)
+    await message.channel.send(embed=embed)
+
+# Allows user to toggle certain actions on and off
+@client.command()
+async def toggle(channel):
+    # Add server to server list if not present
+    server = channel.guild.id 
     if not(server in serverID):
         serverID.append(server)
         index = serverID.index(server)
@@ -46,46 +83,9 @@ def addServer(message):
         serverToggle[index][1].append('NoPeace')
         serverToggle[index][3].append('Disconnect')
         serverToggle[index][3].append('VoiceHonk')
-        with open('servers.data', 'wb') as filehandle:
-            pickle.dump(serverID, filehandle)
-    with open('toggle.data', 'wb') as filehandle:
-        pickle.dump(serverToggle, filehandle)
-    
-
-
-# Lets host know if bot is functional
-@client.event
-async def on_ready():
-    print("I'm in " + str(len(client.guilds)) + " servers!")
-    with open('servers.data', 'rb') as filehandle:
-        serverID = pickle.load(filehandle)
-        print("Server IDs loaded!")
-    with open('toggle.data', 'rb') as filehandle:
-        serverToggle = pickle.load(filehandle)
-        print("Server toggled actions loaded!")
-    print("Honks Incoming")
-
-# Custom Help command
-@client.command()
-async def help(message):
-    addServer(message)
-    author = message.author
-    embed = discord.Embed(
-        colour = discord.Colour.orange()
-    )
-    embed.set_author(name= 'Help')
-    embed.add_field(name='|help', value = 'Shows this message', inline=False)
-    embed.add_field(name='|toggle', value = 'Can toggle certain actions on and off\nTakes \'MessageHonk\', \'Reaction\', \'Memes\', \'Delete\', \'Disconnect\', \'VoiceHonk\'', inline=False)
-    embed.add_field(name='|show', value = 'Shows actions that are toggled on and off', inline=False)
-    embed.add_field(name='How the bot works', value = 'The bot has a random chance per message of performing a random action  ', inline=False)
-    await message.channel.send(embed=embed)
-
-# Allows user to toggle certain actions on and off
-@client.command()
-async def toggle(message):
-    # Add server to server list if not present
     index = serverID.index(server)
-    addServer(message)
+
+    message = channel.message
     change = False
     if 'messagehonk' in message.content.lower():
         change = True
@@ -170,13 +170,28 @@ async def toggle(message):
     if change == False:
         await message.channel.send("Setting not found, try \'MessageHonk\', \'Reaction\', \'Memes\', \'Delete\', \'MessageGoose\', \'NoPeace\' \'Disconnect\', \'VoiceHonk\'")
 
-
 # Shows what is toggled on and off
 @client.command()
 async def show(message):
-    addServer(message)
-    
-    index = serverID.index(message.guild.id)
+    # Add server to server list if not present
+    server = message.guild.id 
+    if not(server in serverID):
+        serverID.append(server)
+        index = serverID.index(server)
+        serverToggle.append([])
+        serverToggle[index].append(server)
+        for i in range(4):
+            serverToggle[index].append([])
+        serverToggle[index][1].append('MessageHonk')
+        serverToggle[index][1].append('Memes')
+        serverToggle[index][1].append('Reaction')
+        serverToggle[index][1].append('Delete')
+        serverToggle[index][1].append('MessageGoose')
+        serverToggle[index][1].append('NoPeace')
+        serverToggle[index][3].append('Disconnect')
+        serverToggle[index][3].append('VoiceHonk')
+    index = serverID.index(server)
+
     channel = message.channel
     string = "Message On:"
 
@@ -203,8 +218,25 @@ async def show(message):
 # On Message random actions
 @client.event
 async def on_message(message):
-    addServer(message)
-    index = serverID.index(message.guild.id)
+    # Add server to server list if not present
+    server = message.guild.id 
+    if not(server in serverID):
+        serverID.append(server)
+        index = serverID.index(server)
+        serverToggle.append([])
+        serverToggle[index].append(server)
+        for i in range(4):
+            serverToggle[index].append([])
+        serverToggle[index][1].append('MessageHonk')
+        serverToggle[index][1].append('Memes')
+        serverToggle[index][1].append('Reaction')
+        serverToggle[index][1].append('Delete')
+        serverToggle[index][1].append('MessageGoose')
+        serverToggle[index][1].append('NoPeace')
+        serverToggle[index][3].append('Disconnect')
+        serverToggle[index][3].append('VoiceHonk')
+    index = serverID.index(server)
+
     channel = message.channel
     await client.process_commands(message)
     if (len(serverToggle[index][1]) != 0 or len(serverToggle[index][3]) != 0) and message.author != client.user and (not message.content.startswith('|')):
@@ -235,7 +267,7 @@ async def on_message(message):
                     voice.source = discord.PCMVolumeTransformer(voice.source)
                     voice.source.volume = 1
                     await message.channel.send("Honks Away")
-                    time.sleep(6)
+                    time.sleep(8)
                     await voice.disconnect()
             else:
                 if serverToggle[index][1][activation-1] == "MessageHonk":
@@ -281,6 +313,6 @@ async def on_message(message):
                     await channel.send('Peace was never an option...\n  -the goose(me)')
 
 
-# Put Bot Token here
-client.run('')
+
+client.run('NzYzODUzNTU0NjM2OTQ3NDU2.X39wDw.uTK3vGTfWsIbdGuGUGPhEkFgxjQ')
 
