@@ -24,6 +24,22 @@ Unique server toggle variables
     serverToggle[index][4] = Voice actiona toggled off
 """
 
+"""
+Improvements I want:
+
+Add reactions to toggle commands
+SQL server to store saved permissions
+Add the top.gg advertisement
+
+-- Optional -- 
+Requires message intent
+If ping goose or mentioned goose, then goose will honk over you every time you talk in vc and do something specific to the user
+    It is possible to take their next message and replace it with honks sporadically
+    
+
+
+"""
+
 
 # Constants
 maxRand = 15        # How many messages for an action to occur
@@ -35,11 +51,6 @@ intents = discord.Intents.default()
 
 # Command Symbol
 client = commands.Bot(command_prefix = '|', intents=intents)
-
-
-
-
-client.remove_command('help')
 
 # on_ready event -- Executed once bot is online
 @client.event
@@ -55,4 +66,17 @@ async def on_ready():
         print("Server toggled actions loaded!")
     
     print("Honks Incoming")
+
+# Custom Help command
+client.remove_command('help')
+@client.command()
+async def help(message):
+    embed = discord.Embed(
+        colour = discord.Colour.orange()
+    )
+
+    embed.set_author(name = 'Help')
+
+    embed.add_field(name = '|help', value = 'Shows this message', inline = False)
+    embed.add_field(name = '|toggle', value = 'Can toggle actions on and off')
 
