@@ -35,7 +35,7 @@ Add the top.gg advertisement
 Requires message intent
 If ping goose or mentioned goose, then goose will honk over you every time you talk in vc and do something specific to the user
     It is possible to take their next message and replace it with honks sporadically
-    
+
 
 
 """
@@ -78,5 +78,6 @@ async def help(message):
     embed.set_author(name = 'Help')
 
     embed.add_field(name = '|help', value = 'Shows this message', inline = False)
-    embed.add_field(name = '|toggle', value = 'Can toggle actions on and off')
+    embed.add_field(name = '|toggle', value = 'Can toggle actions on and off', inline = False)
+    embed.add_field(name = '|show', value = 'Shows actions that are toggled on and off', inline = False)
 
