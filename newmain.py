@@ -78,6 +78,7 @@ async def help(message):
     embed.set_author(name = 'Help')
 
     embed.add_field(name = '|help', value = 'Shows this message', inline = False)
-    embed.add_field(name = '|toggle', value = 'Can toggle actions on and off', inline = False)
+    embed.add_field(name = '|toggle', value = 'Can toggle actions on and off. Can toggle using word commands or reactions', inline = False)
     embed.add_field(name = '|show', value = 'Shows actions that are toggled on and off', inline = False)
+
 
