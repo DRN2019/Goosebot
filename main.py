@@ -66,6 +66,7 @@ async def help(message):
 # Allows user to toggle certain actions on and off
 @client.command()
 async def toggle(channel):
+    
     # Add server to server list if not present
     server = channel.guild.id 
     if not(server in serverID):
@@ -240,7 +241,7 @@ async def on_message(message):
     channel = message.channel
     await client.process_commands(message)
     if (len(serverToggle[index][1]) != 0 or len(serverToggle[index][3]) != 0) and message.author != client.user and (not message.content.startswith('|')):
-        if type(message.author.voice) !=  type(None):
+        if not type(message.author.voice) is None:
             actions = len(serverToggle[index][1]) + len(serverToggle[index][3])
             voicechannel = message.author.voice.channel
         else:
@@ -248,7 +249,7 @@ async def on_message(message):
         activation = random.randint(1, maxRand * actions)
         if activation <= actions:
             # Send "HONK!"
-            inVoice = False
+            inVoice = False 
             if activation > len(serverToggle[index][1]):
                 activation = activation - len(serverToggle[index][1])
                 inVoice = True
@@ -314,5 +315,5 @@ async def on_message(message):
 
 
 
-client.run('NzYzODUzNTU0NjM2OTQ3NDU2.X39wDw.uTK3vGTfWsIbdGuGUGPhEkFgxjQ')
+client.run('NzYzODUzNTU0NjM2OTQ3NDU2.GJ64nV.')
 
