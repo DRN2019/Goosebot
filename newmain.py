@@ -80,5 +80,9 @@ async def help(message):
     embed.add_field(name = '|help', value = 'Shows this message', inline = False)
     embed.add_field(name = '|toggle', value = 'Can toggle actions on and off. Can toggle using word commands or reactions', inline = False)
     embed.add_field(name = '|show', value = 'Shows actions that are toggled on and off', inline = False)
+    embed.add_field(name = 'How the bot works', value = 'The bot has a random chance per message of performing a random action', inline = False)
+    await message.channel.send(embed=embed)
+
+
 
 
