@@ -80,5 +80,51 @@ async def help(message):
     embed.add_field(name = '|help', value = 'Shows this message', inline = False)
     embed.add_field(name = '|toggle', value = 'Can toggle actions on and off. Can toggle using word commands or reactions', inline = False)
     embed.add_field(name = '|show', value = 'Shows actions that are toggled on and off', inline = False)
+    embed.add_field(name='How the bot works', value = 'The bot has a random chance per message of performing a random action  ', inline=False)
+    await message.channel.send(embed=embed)
 
+
+# Shows what is toggled on and off
+@client.command()
+async def show(message):
+    # Add server to server list if not present
+    server = message.guild.id 
+    if not(server in serverID):
+        serverID.append(server)
+        index = serverID.index(server)
+        serverToggle.append([])
+        serverToggle[index].append(server)
+        for i in range(4):
+            serverToggle[index].append([])
+        serverToggle[index][1].append('MessageHonk')
+        serverToggle[index][1].append('Memes')
+        serverToggle[index][1].append('Reaction')
+        serverToggle[index][1].append('Delete')
+        serverToggle[index][1].append('MessageGoose')
+        serverToggle[index][1].append('NoPeace')
+        serverToggle[index][3].append('Disconnect')
+        serverToggle[index][3].append('VoiceHonk')
+    index = serverID.index(server)
+
+    channel = message.channel
+    string = "Message On:"
+
+    for i in serverToggle[index][1]:
+        string = string + " " + i
+    await channel.send(string)
+    string = "Message Off:"
+
+    for i in serverToggle[index][2]:
+        string = string + " " + i
+    await channel.send(string)
+    string = "Voice On:"
+
+    for i in serverToggle[index][3]:
+        string = string + " " + i
+    await channel.send(string)
+    string = "Voice Off:"
+
+    for i in serverToggle[index][4]:
+        string = string + " " + i
+    await channel.send(string)
 
