@@ -6,6 +6,7 @@ import random
 import time
 import os
 import pickle
+import mysql.connector
 
 """
 Programmed by Darren Wu
@@ -52,20 +53,45 @@ intents = discord.Intents.default()
 # Command Symbol
 client = commands.Bot(command_prefix = '|', intents=intents)
 
+async def connectServer(hostIP, username, password):
+    
+    mydb = mysql.connector.connect(
+        host = hostIP,
+        user = username,
+        password = password
+    )
+    print("Connected to mySQL Server!!!")
+    
+
+
+
+
+
+
+
+
+
+
+
 # on_ready event -- Executed once bot is online
 @client.event
 async def on_ready():
     nServers = len(client.guilds)
     print(f"I'm in {nServers} servers!")
 
-    with open('servers.data', 'rb') as f:
-        serverId = pickle.load(f)
-        print("Server IDs loaded")
-    with open('toggle.data', 'rb') as filehandle:
-        serverToggle = pickle.load(filehandle)
-        print("Server toggled actions loaded!")
-    
+    connectServer("localhost", "username", "password")
     print("Honks Incoming")
+
+
+
+
+
+
+
+
+
+
+
 
 # Custom Help command
 client.remove_command('help')
@@ -127,4 +153,45 @@ async def show(message):
     for i in serverToggle[index][4]:
         string = string + " " + i
     await channel.send(string)
+
+
+
+
+
+
+
+# ---------- Action functions ----------
+async def messageHonk(message):
+    await message.channel.send('Honk!')
+
+
+async def memes(message):
+    imageNum = random.randint(1,8)
+    file = discord.File('Goose Images\Meme1.png')
+    match imageNum:
+        case 1:
+            file = discord.File('Goose Images\Meme1.png')
+        case 2:
+            file = discord.File('Goose Images\Meme2.png')
+        case 3:
+            file = discord.File('Goose Images\Meme3.png')
+        case 4:
+            file = discord.File('Goose Images\Meme4.png')
+        case 5:
+            file = discord.File('Goose Images\Meme5.png')
+        case 6:
+            file = discord.File('Goose Images\Meme6.png')
+        case 7:
+            file = discord.File('Goose Images\Meme7.png')
+        case 8:
+            file = discord.File("Goose Images\GooseDance.gif")
+        case default:
+            print(f"Number {imageNum} is not a valid image option")
+    await message.channel.send(file=file)
+
+
+async def delete(message):
+    await message.delete()
+    await message.channel.send(message.author.mention + "Your message got HOOOONKed")
+
 
